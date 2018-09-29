@@ -14,8 +14,11 @@ const UPSIDE_DOWN_LOOKUP = {
 }
 const FACES = {
   ANGRY: 'angry',
-  NORMAL: 'normal'
+  NORMAL: 'normal',
+  SLEEPY: 'sleepy',
+  WATCHING: 'watching'
 }
+const FACE_VALUES = Object.values(FACES)
 
 const getWordElement = () => document.getElementById('word')
 const getBirdElement = () => document.getElementById('bird')
@@ -27,19 +30,22 @@ const setCurrentState = state => {
   classList.remove(...STATE_VALUES)
   classList.add(state)
 }
+const getCurrentFace = () => [...getFaceElement().classList].find(c => FACE_VALUES.includes(c))
+
 const setFace = face => {
   const faceElement = getFaceElement()
-  faceElement.classList.remove(...Object.values(FACES))
+  faceElement.classList.remove(...FACE_VALUES)
   faceElement.classList.add(face)
 }
 
 
 const onBirdClick = () => {
-  setFace(FACES.NORMAL)
   const currentState = getCurrentState()
   if (currentState === STATES.FLIPPED) {
     setCurrentState(STATES.UNFLIPPED)
+    setFace(FACES.SLEEPY)
   } else if (currentState === STATES.UNFLIPPED) {
+    setFace(FACES.NORMAL)
     setCurrentState(STATES.FLIPPING)
     setTimeout(() => {
       setCurrentState(STATES.FLIPPED)
@@ -49,11 +55,13 @@ const onBirdClick = () => {
 
 const setPadding = () => {
   const wordSpan = getWordElement();
-  const padding = (wordSpan.clientWidth / 2) - wordSpan.clientHeight
+  const padding = (wordSpan.clientWidth) - wordSpan.clientHeight
   getBirdContainerElement().style.paddingTop = padding
 }
 
 const setText = () => {
+
+
   const text = getWordElement().innerText
   const splitText = text.split('')
   const upsideDownText = splitText.map(c => UPSIDE_DOWN_LOOKUP[c]).reverse().join('')
@@ -66,8 +74,24 @@ const setText = () => {
   setPadding()
 }
 
+const wakeTheBird = () => {
+  if (getCurrentFace() === FACES.SLEEPY) {
+    setFace(FACES.WATCHING)
+    setTimeout(() => {
+      setFace(FACES.SLEEPY)
+    }, 1000);
+  }
+}
+
+
+const onInput = () => {
+  setText()
+  wakeTheBird()
+}
+
 let interval;
 const onmousedown = () => {
+  setFace(FACES.NORMAL)
   clearInterval(interval);
   const currentState = getCurrentState()
   if (currentState === STATES.UNFLIPPED) {
@@ -107,9 +131,9 @@ function run() {
   bird.onmousedown = onmousedown
 
   document.body.onkeyup = e => e.keyCode === 13 && onBirdClick()
-    
+
   const wordElement = getWordElement()
-  wordElement.oninput = setText
+  wordElement.oninput = onInput
   wordElement.onkeydown = validateKeyDown
   wordElement.onpaste = validatePaste
   setText()
