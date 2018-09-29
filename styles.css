@@ -1,0 +1,178 @@
+:root {
+  --flipping-word-bottom: 2px;
+}
+
+.angry.face::before {
+  content: "ಠ益ಠ";
+}
+
+.angry.face .normal {
+  display: none;
+}
+
+body {
+  background: #404071;
+}
+
+.layout-wrapper {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 50px auto 50px;
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.bird-layout-item {
+  grid-row: 2;
+  grid-column: 2;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.bird-row {
+  position: relative;
+  display: block;
+  font-family: arial;
+  font-size: 2em;
+  font-weight: bold;
+  border-bottom: 5px solid orange;
+}
+
+span.animatable {
+  display: inline-grid;
+}
+
+.bird {
+  cursor: pointer;
+  pointer-events: all;
+  display: inline-block;
+}
+
+.unflipped .arm {
+  transform-origin: center left;
+  transform: rotate(45deg);
+}
+
+.flipping .arm {
+  animation-duration: 1s;
+  animation-name: lift-arms;
+  transform-origin: center left;
+}
+
+@keyframes lift-arms {
+  from {
+    transform: rotate(45deg);
+  }
+  to {
+    transform: rotate(0);
+  }
+}
+
+.unflipped .boing {
+  display: none;
+}
+
+.flipping .boing {
+  animation: 1s slidein;
+  transform-origin: left center;
+  overflow: hidden;
+}
+
+@keyframes slidein {
+  from {
+    width: 0px;
+  }
+  to {
+    width: 32px;
+  }
+}
+
+.word {
+  border: none;
+  font-size: 1em;
+  font-weight: bold;
+  position: absolute;
+  bottom: var(--flipping-word-bottom);
+  background: transparent;
+}
+
+.flipped .word {
+  display: none;
+}
+
+.table {
+  display: inline-block;
+}
+
+.flipping .flipper {
+  animation-duration: 1s;
+  animation-name: flip-over;
+  transform-origin: center;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+@keyframes flip-over {
+  from {
+    display: initial;
+  }
+  50% {
+    bottom: 100%;
+  }
+  to {
+    transform: rotate(180deg);
+    /* margin-left: 100px; */
+    margin-left: 41px;
+    bottom: var(--flipping-word-bottom);
+  }
+}
+
+.bird-row .upside-down {
+  display: none;
+}
+
+.flipped .upside-down {
+  display: inline-block;
+}
+
+.unflipped .shake:active {
+  animation: shake;
+  animation-iteration-count: infinite;
+}
+
+@keyframes shake {
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
+}
