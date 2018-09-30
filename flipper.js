@@ -146,7 +146,7 @@ const validateInput = input => {
   return true
 }
 
-const validateKeyDown = event => event.key.length > 1 || validateInput(event.key)
+const validateKeyDown = event => event.keyCode !== 13 && (event.key.length > 1 || validateInput(event.key))
 
 const validatePaste = event => {
   const text = (event.clipboardData || window.clipboardData).getData('text')
