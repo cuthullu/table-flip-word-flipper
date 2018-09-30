@@ -2,26 +2,6 @@
   --flipping-word-bottom: 2px;
 }
 
-.angry.face::before {
-  content: "ಠ益ಠ";
-}
-
-.sleepy.face::before {
-  content: '─ □ ─'
-}
-
-.watching.face::before {
-  content: '─ □ °'  
-}
-
-.normal.face::before {
-  content: '° □ °'
-}
-
-.angry.face .normal {
-  display: none;
-}
-
 body {
   background: #404071;
 }
@@ -31,7 +11,7 @@ body {
   width: 100%;
   display: grid;
   grid-template-columns: 50px auto 50px;
-  grid-template-rows: repeat(3, 1fr);
+  grid-template-rows: 100px 70% 200px;
 }
 
 .bird-layout-item {
@@ -39,11 +19,37 @@ body {
   grid-column: 2;
   display: flex;
   flex-direction: column-reverse;
+  max-height: 100%;
+}
+
+.controls-layout-item {
+  grid-row: 3;
+  grid-column: 2;
+}
+
+.btn.copy {
+  display: none;
+  border-color: orange;
+  border-top: none;
+}
+
+.btn img {
+  width: 100%;
+  height: 100%;
+  padding-left: 2px;
+}
+
+.flipped .btn.copy {
+  display: block;
+  width: 50px;
+  height: 50px;
+  background: transparent;
 }
 
 .bird-row {
   position: relative;
   display: block;
+  white-space: nowrap;
   font-family: arial;
   font-size: 2em;
   font-weight: bold;
@@ -149,11 +155,35 @@ span.animatable {
 }
 
 .unflipped .shake:active {
-  animation: shake;
+  animation: shake-mad;
   animation-iteration-count: infinite;
 }
 
-@keyframes shake {
+.unflipped .shake.nope {
+  animation: shake-nope;
+  animation-iteration-count: 1;
+  animation-duration: 1s;
+}
+
+@keyframes shake-nope {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes shake-mad {
   0% {
     transform: translate(1px, 1px) rotate(0deg);
   }

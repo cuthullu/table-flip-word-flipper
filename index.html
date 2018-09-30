@@ -6,16 +6,13 @@
 </head>
 
 <body>
-  <div class="layout-wrapper">
+  <div class="layout-wrapper unflipped" id="bird-state-container">
     <div class="layout-item bird-layout-item">
-      <div id="bird-row" class="bird-row unflipped">
+      <div id="bird-row" class="bird-row">
         <span class="bird shake" id="bird">
-
           (
           <span class="arm animatable ">╯</span>
           <span class="face sleepy" id="face">
-            <!-- <span class="normal">─ □ ─</span>  -->
-            <!-- ─ ° □ °-->
           </span>
           ）
           <span class="arm animatable ">╯</span>
@@ -26,6 +23,11 @@
         <span class="boing animatable">︵</span>
         <span class="upside-down finishable">┻━┻</span>
       </div>
+    </div>
+    <div class="layout-item controls-layout-item">
+      <button class="btn copy" id="copy-btn">
+        <img src="clipboard.svg"></img>
+      </button>
     </div>
   </div>
 </body>

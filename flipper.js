@@ -12,30 +12,46 @@ const UPSIDE_DOWN_LOOKUP = {
   '_': '\u203E', ';': '\u061B', '\u203F': '\u2040', '\u2045': '\u2046', '\u2234': '\u2235', '&': '\u214b', '\"': '\u201e', ',': '\'', ' ': ' ',
   '━': '─', '─': '━', '┬': '┻', '┻': '┬', ' ': ' ', '\u00A0': '\u00A0'
 }
+
 const FACES = {
   ANGRY: 'angry',
   NORMAL: 'normal',
   SLEEPY: 'sleepy',
-  WATCHING: 'watching'
+  WATCHING: 'watching',
+  NOPE: 'nope'
 }
 const FACE_VALUES = Object.values(FACES)
+const FACE_DISPLAYS = {
+  [FACES.ANGRY]: "ಠ益ಠ",
+  [FACES.SLEEPY]: "‾ □ ‾",
+  [FACES.WATCHING]: "‾ □ °",
+  [FACES.NORMAL]: "° □ °",
+  [FACES.NOPE]: "° □ °",
+}
 
 const getWordElement = () => document.getElementById('word')
 const getBirdElement = () => document.getElementById('bird')
 const getFaceElement = () => document.getElementById('face')
 const getBirdContainerElement = () => document.getElementById("bird-row")
-const getCurrentState = () => [...getBirdContainerElement().classList].find(c => STATE_VALUES.includes(c))
+const getCopyButton = () => document.getElementById('copy-btn')
+const getStateContainerElement = () => document.getElementById('bird-state-container')
+const getCurrentState = () => [...getStateContainerElement().classList].find(c => STATE_VALUES.includes(c))
 const setCurrentState = state => {
-  const { classList } = getBirdContainerElement()
+  const element = getStateContainerElement()
+  const { classList } = element
   classList.remove(...STATE_VALUES)
   classList.add(state)
 }
-const getCurrentFace = () => [...getFaceElement().classList].find(c => FACE_VALUES.includes(c))
+
+const getCurrentFace = () => [...getBirdElement().classList].find(c => FACE_VALUES.includes(c))
 
 const setFace = face => {
+  const birdElement = getBirdElement();
+  birdElement.classList.remove(...FACE_VALUES)
+  birdElement.classList.add(face)
+
   const faceElement = getFaceElement()
-  faceElement.classList.remove(...FACE_VALUES)
-  faceElement.classList.add(face)
+  faceElement.textContent = FACE_DISPLAYS[face]
 }
 
 
@@ -78,8 +94,22 @@ const wakeTheBird = () => {
   if (getCurrentFace() === FACES.SLEEPY) {
     setFace(FACES.WATCHING)
     setTimeout(() => {
-      setFace(FACES.SLEEPY)
+      if (getCurrentState() === STATES.UNFLIPPED) {
+        setFace(FACES.SLEEPY)
+      }
     }, 1000);
+  }
+}
+
+const shakeTheBird = () => {
+  const currentFace = getCurrentFace();
+  if (currentFace === FACES.SLEEPY || currentFace === FACES.WATCHING) {
+    setFace(FACES.NOPE)
+    setTimeout(() => {
+      if (getCurrentFace() === FACES.NOPE) {
+        setFace(FACES.SLEEPY)
+      }
+    }, 500)
   }
 }
 
@@ -112,7 +142,10 @@ const onmousedown = () => {
 
 const validateInput = input => {
   for (let char of input.split('')) {
-    if (UPSIDE_DOWN_LOOKUP[char] === undefined) return false
+    if (UPSIDE_DOWN_LOOKUP[char] === undefined) {
+      shakeTheBird()
+      return false
+    }
   }
   return true
 }
@@ -122,6 +155,11 @@ const validateKeyDown = event => event.key.length > 1 || validateInput(event.key
 const validatePaste = event => {
   const text = (event.clipboardData || window.clipboardData).getData('text')
   return validateInput(text)
+}
+
+const onCopyClick = () => {
+  window.getSelection().selectAllChildren(getBirdContainerElement());
+  document.execCommand('copy')
 }
 
 
@@ -137,6 +175,9 @@ function run() {
   wordElement.onkeydown = validateKeyDown
   wordElement.onpaste = validatePaste
   setText()
+  setFace(FACES.SLEEPY)
+
+  getCopyButton().onclick = onCopyClick
 }
 
 window.onload = run
