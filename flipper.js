@@ -63,6 +63,7 @@ const onBirdClick = () => {
   } else if (currentState === STATES.UNFLIPPED) {
     setFace(FACES.NORMAL)
     setCurrentState(STATES.FLIPPING)
+    setUrlParam()
     setTimeout(() => {
       setCurrentState(STATES.FLIPPED)
     }, 600)
@@ -76,16 +77,11 @@ const setPadding = () => {
 }
 
 const setText = () => {
-
-
   const text = getWordElement().innerText
   const splitText = text.split('')
   const upsideDownText = splitText.map(c => UPSIDE_DOWN_LOOKUP[c]).reverse().join('')
   const textOutputs = [...document.getElementsByClassName('upside-down')];
   textOutputs.forEach(el => el.textContent = upsideDownText)
-
-  const filteredText = splitText.filter(c => !!UPSIDE_DOWN_LOOKUP[c]).join('')
-  getWordElement().textContent = filteredText
 
   setPadding()
 }
@@ -162,6 +158,27 @@ const onCopyClick = () => {
   document.execCommand('copy')
 }
 
+const onUrlopen = () => {
+  const searchParams = new URLSearchParams(window.location.search)
+  const text = searchParams.get('text')
+
+  if (text !== null && validateInput(text)) {
+    getWordElement().textContent = text
+  }
+  setText()
+}
+
+const setUrlParam = () => {
+  const text = getWordElement().innerText
+  const searchParams = new URLSearchParams(window.location.search)
+  if (searchParams.get('text') !== text) {
+    searchParams.set('text', text)
+    var newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
+    history.pushState(null, '', newRelativePathQuery);
+
+  }
+}
+
 
 function run() {
   const bird = getBirdElement();
@@ -174,7 +191,7 @@ function run() {
   wordElement.oninput = onInput
   wordElement.onkeydown = validateKeyDown
   wordElement.onpaste = validatePaste
-  setText()
+  onUrlopen()
   setFace(FACES.SLEEPY)
 
   getCopyButton().onclick = onCopyClick
